@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You Won!</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+      <!-- Discord/OpenGraph Meta Tags -->
+    <meta property="og:title" content="Just Click It">
+    <meta property="og:description" content="Seriously just click it. You won't regret it.">
+    <meta property="og:image" content="https://justclickit.click/android-chrome-192x192.png">
+    <meta property="og:url" content="https://justclickit.click/">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#ebcd0e">
+  
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <style>
+        
+        /* Custom cursor styles */
+        .no-scroll {
+                overflow: hidden;
+            }
+
+        body {
+            cursor: url('cursor-normal.png'), auto;
+            overflow: hidden;
+        }
+        
+        a:hover, button:hover {
+            cursor: url('cursor-pointer.png'), pointer;
+        }
+        
+        .winner-content {
+            display: none;
+        }
+        
+        .unauthorized {
+            display: none;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            animation: confetti-fall 5s linear infinite;
+            overflow: hidden;
+        }
+        
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        
+        .music-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            z-index: 100;
+            display: none; /* Hidden by default, will be shown only for winners */
+        }
+        
+        .music-controls button {
+            background: none;
+            border: 1px solid white;
+            border-radius: 5px;
+            color: white;
+            padding: 5px 10px;
+            cursor: url('cursor-pointer.png'), pointer;
+            margin-right: 10px;
+        }
+        
+        .play-again {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4682B4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .play-again:hover {
+            background-color: #5692C4;
+            cursor: url('cursor-pointer.png'), pointer;
+        }
+        
+        /* Custom cursor when clicking */
+        .clicking {
+            cursor: url('cursor-click.png'), auto !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Winner content will only be shown to verified winners -->
+    <div class="winner-content" id="winnerContent">
+        <h1>CONGRATULATIONS!</h1>
+        <h2>You've reached 1 MILLION clicks!</h2>
+        <p>You are officially the Click Master!</p>
+        <p id="finalScore">Your final score: 1,000,000</p>
+        <div style="display: flex; gap: 20px;">
+            <a href="construction.html" class="play-again">Donate To The Project</a>
+            <a href="Certificate of Completion.pdf" class="play-again">Certificate</a>
+        </div>
+        <div id="confettiContainer"></div>
+    </div>
+    
+    <!-- Shown to users who try to access this page directly -->
+    <div class="unauthorized" id="unauthorized">
+        <h1>Nice Try!</h1>
+        <p>You need to earn your way here by getting 1 million clicks!</p>
+        <a href="index.html">Back to the game</a>
+    </div>
+    
+    <!-- Music controls - only visible for verified winners -->
+    <div class="music-controls" id="musicControls">
+        <button id="toggleMusic">🔊</button>
+        <span id="track-info">Victory Music</span>
+        <input type="range" id="volumeSlider" min="0" max="100" value="50" style="width: 100px; margin-left: 10px;">
+    </div>
+    
+    <script>
+        // Background music system for winner page
+        class WinnerMusic {
+            constructor() {
+                this.audioElement = new Audio('Nocturne in E-flat Major, Op. 9, No. 2.mp3');  // Use a victory music file
+                this.audioElement.loop = true;
+                this.volume = 0.5;  // 50% volume by default
+                this.audioElement.volume = this.volume;
+                this.isMuted = false;
+                
+                // Set up UI controls
+                this.toggleButton = document.getElementById('toggleMusic');
+                this.volumeSlider = document.getElementById('volumeSlider');
+                
+                // Set up event listeners
+                this.toggleButton.addEventListener('click', () => {
+                    this.toggleMute();
+                });
+                
+                this.volumeSlider.addEventListener('input', (e) => {
+                    this.setVolume(e.target.value / 100);
+                });
+                
+                // Try to play on first user interaction
+                document.addEventListener('click', () => {
+                    this.audioElement.play().catch(e => console.log("Couldn't play audio:", e));
+                }, { once: true });
+            }
+            
+            play() {
+                this.audioElement.play().catch(e => {
+                    console.log("Audio playback error:", e);
+                });
+            }
+            
+            toggleMute() {
+                this.isMuted = !this.isMuted;
+                this.audioElement.muted = this.isMuted;
+                this.toggleButton.textContent = this.isMuted ? '🔇' : '🔊';
+            }
+            
+            setVolume(volume) {
+                this.volume = Math.max(0, Math.min(1, volume));
+                this.audioElement.volume = this.volume;
+            }
+        }
+        
+        // Custom reactive cursor
+        function setupReactiveCursor() {
+            document.addEventListener('mousedown', function() {
+                document.body.classList.add('clicking');
+            });
+            
+            document.addEventListener('mouseup', function() {
+                document.body.classList.remove('clicking');
+            });
+        }
+        
+        // Verify the user actually won and initialize page
+        window.onload = function() {
+            const winnerVerified = localStorage.getItem('winnerVerified');
+            
+            if (winnerVerified === 'true') {
+                // Show winner content
+                document.getElementById('winnerContent').style.display = 'block';
+                
+                // Show music controls for winners only
+                document.getElementById('musicControls').style.display = 'block';
+                
+                // Display final score
+                const finalScore = localStorage.getItem('finalScore');
+                if (finalScore) {
+                    const formattedScore = parseInt(finalScore).toLocaleString();
+                    document.getElementById('finalScore').textContent = `Your final score: ${formattedScore}`;
+                }
+                
+                // Create confetti
+                createConfetti();
+                
+                // Initialize and play music
+                const winnerMusic = new WinnerMusic();
+                winnerMusic.play();
+            } else {
+                // Show unauthorized message
+                document.getElementById('unauthorized').style.display = 'block';
+                // No music for unauthorized users
+            }
+            
+            // Setup reactive cursor for all users
+            setupReactiveCursor();
+        };
+        
+        // Create confetti particles
+        function createConfetti() {
+            const container = document.getElementById('confettiContainer');
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.animationDuration = `${3 + Math.random() * 5}s`;
+                confetti.style.animationDelay = `${Math.random() * 2}s`;
+                container.appendChild(confetti);
+            }
+        }
+    </script>
+</body>
+</html>

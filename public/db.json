@@ -1,0 +1,17 @@
+[
+    {
+      "username": "admin",
+      "password": "clickmaster123",
+      "role": "administrator"
+    },
+    {
+      "username": "dev",
+      "password": "testing456",
+      "role": "developer"
+    },
+    {
+      "username": "richie",
+      "password": "cookiegod789",
+      "role": "owner"
+    }
+]
