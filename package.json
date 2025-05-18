@@ -1,0 +1,31 @@
+{
+  "name": "node-web-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benadeja/nodejs.git"
+  },
+  "keywords": [
+    "nodejs",
+    "javascript"
+  ],
+  "author": "Jaco Benade",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/benadeja/nodejs/issues"
+  },
+  "homepage": "https://github.com/benadeja/nodejs#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "express-rate-limit": "^7.5.0",
+    "hbs": "^4.0.1",
+    "redis": "^4.7.0",
+    "winston": "^3.17.0"
+  }
+}

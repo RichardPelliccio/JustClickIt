@@ -1,0 +1,26 @@
+body {background-color: rgb(0, 0, 0);}
+
+p {
+    color: rgb(255, 255, 255);
+  }
+
+.my-img-container {
+    position: relative;
+    &:before {
+      display: block;
+      content: " ";
+      background: url("https://lorempixel.com/300/160/") no-repeat;
+      background-size: 100% 100%;
+      width: 100% !important;
+      padding-top: 56.25%;
+    }
+    >img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
