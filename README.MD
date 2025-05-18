@@ -1,4 +1,4 @@
-# Project Name
+# Just Click It
 
 ## Dependencies
 - **Node.js**: Version `v20.17.0`
